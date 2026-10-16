@@ -1,0 +1,30 @@
+{
+  "best_model": "SVM",
+  "label_mapping": {
+    "0": "Fake",
+    "1": "Real"
+  },
+  "test_metrics": [
+    {
+      "Model": "SVM",
+      "Accuracy": 0.9936618807,
+      "Precision": 0.993930748,
+      "Recall": 0.9932867482,
+      "F1-score": 0.9935980432
+    },
+    {
+      "Model": "Random Forest",
+      "Accuracy": 0.9908161945,
+      "Precision": 0.9913449279,
+      "Recall": 0.990161923,
+      "F1-score": 0.990718789
+    },
+    {
+      "Model": "Naive Bayes",
+      "Accuracy": 0.946190661,
+      "Precision": 0.9456254034,
+      "Recall": 0.9457592483,
+      "F1-score": 0.9456917409
+    }
+  ]
+}

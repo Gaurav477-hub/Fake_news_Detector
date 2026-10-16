@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.py[cod]
+data/
+outputs/
+pip_install.log
+nltk_data/
+.env
+.env.*

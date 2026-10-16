@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Fake news classification using machine learning.">
+    <title>Fake News Detector</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; background: #0b1020; color: #edf2ff; }
+      body { display: grid; min-height: 100vh; margin: 0; place-items: center; background: radial-gradient(circle at top, #1a2b5a, #0b1020 55%); }
+      main { width: min(720px, calc(100% - 2rem)); padding: 2.5rem; border: 1px solid #33436e; border-radius: 1rem; background: #121a31; box-shadow: 0 20px 50px #02050f80; }
+      h1 { margin-top: 0; } p, label { color: #c6d0ea; } label { display: block; margin: 1rem 0 .5rem; font-weight: 700; }
+      input, textarea { box-sizing: border-box; width: 100%; padding: .8rem; border: 1px solid #52648f; border-radius: .5rem; background: #0b1020; color: inherit; font: inherit; }
+      textarea { min-height: 220px; resize: vertical; }
+      button { margin-top: 1.25rem; padding: .8rem 1.2rem; border: 0; border-radius: .5rem; background: #61dafb; color: #08101e; cursor: pointer; font: inherit; font-weight: 800; }
+      button:disabled { cursor: wait; opacity: .7; }
+      #result { display: none; margin-top: 1.5rem; padding: 1rem; border-left: 4px solid #61dafb; border-radius: .4rem; background: #182442; }
+      #result.fake { border-color: #ff6b6b; } #result.real { border-color: #51cf66; } #error { color: #ff9b9b; } .small { font-size: .9rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Fake News Detector</h1>
+      <p>Enter a news headline and/or article to receive a machine-learning prediction.</p>
+      <form id="prediction-form">
+        <label for="title">News headline (optional)</label>
+        <input id="title" name="title" maxlength="500">
+        <label for="text">News article text</label>
+        <textarea id="text" name="text" maxlength="50000"></textarea>
+        <button id="submit-button" type="submit">Check News</button>
+      </form>
+      <section id="result" aria-live="polite"></section>
+      <p id="error" role="alert"></p>
+      <p class="small">This tool identifies learned text patterns; it does not independently fact-check claims.</p>
+    </main>
+    <script>
+      const form = document.querySelector("#prediction-form");
+      const button = document.querySelector("#submit-button");
+      const result = document.querySelector("#result");
+      const error = document.querySelector("#error");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        result.style.display = "none";
+        error.textContent = "";
+        button.disabled = true;
+        button.textContent = "Checking...";
+        try {
+          const response = await fetch("/api/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: document.querySelector("#title").value, text: document.querySelector("#text").value })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || "The prediction request failed.");
+          result.className = data.prediction.toLowerCase();
+          result.innerHTML = `<strong>Prediction: ${data.message}</strong>` +
+            (data.probability ? `<p>Model probability: ${(data.probability * 100).toFixed(1)}%</p>` : "") +
+            `<p class="small">${data.disclaimer}</p>`;
+          result.style.display = "block";
+        } catch (requestError) {
+          error.textContent = requestError.message;
+        } finally {
+          button.disabled = false;
+          button.textContent = "Check News";
+        }
+      });
+    </script>
+  </body>
+</html>
