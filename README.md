@@ -33,8 +33,7 @@ Install dependencies:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements-dev.txt
-python build.py
+pip install -r requirements.txt
 ```
 
 ## Train and save the model
@@ -55,21 +54,10 @@ model_results.csv
 ## Run the application
 
 ```powershell
-python build.py
-flask --app app run
+streamlit run app.py
 ```
 
-Open `http://127.0.0.1:5000`, then enter a headline and/or article body.
-
-## Deploy to Vercel
-
-1. Run `python build.py`, then `python train_model.py` locally so that the two `.joblib` model files exist in `models`.
-2. Verify the local app with `flask --app app run`.
-3. Commit the source files and the two `.joblib` artifacts, but do not commit `data`, `.venv`, or `outputs`.
-4. Push the repository to GitHub.
-5. In Vercel, select **Add New Project**, import the GitHub repository, and choose **Deploy**.
-
-Vercel reads `app.py` as the Flask entry point, builds the NLTK resources with `build.py`, and serves the browser interface at the project URL. The `vercel.json` file excludes training data and development-only files from the function bundle.
+Enter a headline and/or article body, then select **Check News**.
 
 ## Test sample predictions
 
